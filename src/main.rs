@@ -18,6 +18,7 @@ struct ParenLocations {
 }
 
 impl ParenLocations {
+    /// Constructor - what happens to a Vector when nothing is pushed into it?
     fn new() -> ParenLocations {
         ParenLocations {
             open: Vec::new(),
@@ -45,11 +46,13 @@ impl ParenLocations {
 }
 
 impl fmt::Display for ParenLocations {
+    /// The code in the fmt function is essentially like __str__ in Python, except there are a ton
+    /// of formatting 'traits' to implement for the different primitive types that ParenLocations
+    /// may encapsulate. Binary, LowerExp, LowerHex, Octal, Pointer, UpperExp, UpperHex, & Write.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "number of open parenthesis found : {} \
-                number of closed parenthesis found : {}",
+            "(open=('{}'),closed=('{}'))",
             self.open.iter().count(),
             self.closed.iter().count()
         )
@@ -78,6 +81,6 @@ fn main() {
     parens.find_open_locations(&file_contents);
     parens.find_closed_locations(&file_contents);
 
-    println!("Display using Debug : {:?}", parens);
-    println!("Display using fmt::Display : {}", parens);
+    println!("Display using Debug   : {:?}", parens);
+    println!("Display using Display : {}", parens);
 }
