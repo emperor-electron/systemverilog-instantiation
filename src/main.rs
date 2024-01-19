@@ -8,14 +8,39 @@ use std::process::exit;
 struct Args {
     /// File path to a SystemVerilog module
     file_path: String,
+}
 
-    /// Connects ports explicitly by name
-    #[arg(short, long)]
-    by_name: bool,
+#[derive(Debug)]
+struct ParenLocations {
+    open: Vec<Option<usize>>,
+    closed: Vec<Option<usize>>,
+}
 
-    /// Connects ports implicitly
-    #[arg(short, long)]
-    implicit: bool,
+impl ParenLocations {
+    fn new() -> ParenLocations {
+        ParenLocations {
+            open: Vec::new(),
+            closed: Vec::new(),
+        }
+    }
+
+    /// Finds first '(' in each line of the string slice and appends to self.open
+    fn find_open_locations(&mut self, text: &str) {
+        for line in text.lines() {
+            let line_contents = line;
+            let paren_location_open = line_contents.find("(");
+            self.open.push(paren_location_open);
+        }
+    }
+
+    /// Finds first ')' in each line of the string slice and appends to self.closed
+    fn find_closed_locations(&mut self, text: &str) {
+        for line in text.lines() {
+            let line_contents = line;
+            let paren_location_open = line_contents.find(")");
+            self.closed.push(paren_location_open);
+        }
+    }
 }
 
 fn main() {
@@ -34,16 +59,11 @@ fn main() {
     };
 
     print!("{}", file_contents);
-}
 
-fn _port_names(_arg: &str) -> String {
-    unimplemented!();
-}
+    // What if a line has more than a single '(' or ')' character?
+    let mut parens = ParenLocations::new();
+    parens.find_open_locations(&file_contents);
+    parens.find_closed_locations(&file_contents);
 
-fn _port_types(_arg: &str) -> String {
-    unimplemented!();
-}
-
-fn _port_directions(_arg: &str) -> String {
-    unimplemented!();
+    println!("{:?}", parens);
 }
