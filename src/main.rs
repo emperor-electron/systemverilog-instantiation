@@ -1,4 +1,5 @@
 use clap::Parser;
+use std::fmt;
 use std::fs::File;
 use std::io::Read;
 use std::process::exit;
@@ -43,6 +44,18 @@ impl ParenLocations {
     }
 }
 
+impl fmt::Display for ParenLocations {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "number of open parenthesis found : {} \
+                number of closed parenthesis found : {}",
+            self.open.iter().count(),
+            self.closed.iter().count()
+        )
+    }
+}
+
 fn main() {
     let cli = Args::parse();
     let file_path: &str = &cli.file_path;
@@ -65,5 +78,6 @@ fn main() {
     parens.find_open_locations(&file_contents);
     parens.find_closed_locations(&file_contents);
 
-    println!("{:?}", parens);
+    println!("Display using Debug : {:?}", parens);
+    println!("Display using fmt::Display : {}", parens);
 }
